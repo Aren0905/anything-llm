@@ -57,7 +57,7 @@ export default function VectorDBSelection({
           <div className="px-6 space-y-6 flex h-full w-full">
             <div className="w-full flex flex-col gap-y-4">
               <p className="block text-sm font-medium text-gray-800 dark:text-slate-200">
-                Vector database provider
+                Vector database providers
               </p>
               <div className="w-full flex overflow-x-scroll gap-x-4 no-scroll">
                 <input hidden={true} name="VectorDB" value={vectorDB} />
@@ -96,7 +96,7 @@ export default function VectorDBSelection({
                       Pinecone DB API Key
                     </label>
                     <input
-                      type="text"
+                      type="password"
                       name="PineConeKey"
                       disabled={!canDebug}
                       className="bg-gray-50 border border-gray-500 text-gray-900 placeholder-gray-500 text-sm rounded-lg dark:bg-stone-700 focus:border-stone-500 block w-full p-2.5 dark:text-slate-200 dark:placeholder-stone-500 dark:border-slate-200"
