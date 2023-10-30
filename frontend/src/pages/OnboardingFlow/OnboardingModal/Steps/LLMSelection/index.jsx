@@ -7,7 +7,7 @@ import System from "../../../../../models/system";
 import PreLoader from "../../../../../components/Preloader";
 import LLMProviderOption from "../../../../../components/LLMProviderOption";
 
-function LLMSelection({ nextStep, prevStep, currentStep }) {
+function LLMSelection({ nextStep, prevStep, currentStep, goToStep }) {
   const [llmChoice, setLLMChoice] = useState("openai");
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,13 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
       alert(`Failed to save LLM settings: ${error}`, "error");
       return;
     }
-    nextStep();
+
+    switch (data.LLMProvider) {
+      case "anthropic":
+        goToStep(7);
+      default:
+        nextStep();
+    }
     return;
   };
 
@@ -59,7 +65,7 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
             LLM Providers
           </div>
           <div className="w-full flex md:flex-wrap overflow-x-scroll gap-4 max-w-[900px]">
-            <input hidden={true} name="LLMProvider" defaultValue={llmChoice} />
+            <input hidden={true} name="LLMProvider" value={llmChoice} />
             <LLMProviderOption
               name="OpenAI"
               value="openai"
@@ -80,11 +86,12 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
             />
             <LLMProviderOption
               name="Anthropic Claude 2"
-              value="anthropic-claude-2"
+              value="anthropic"
               link="anthropic.com"
-              description="[COMING SOON] A friendly AI Assistant hosted by Anthropic. Provides chat services only!"
-              checked={llmChoice === "anthropic-claude-2"}
+              description="A friendly AI Assistant hosted by Anthropic. Provides chat services only!"
+              checked={llmChoice === "anthropic"}
               image={AnthropicLogo}
+              onClick={updateLLMChoice}
             />
           </div>
           <div className="mt-10 flex flex-wrap gap-4 max-w-[800px]">
@@ -166,7 +173,7 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
 
                 <div className="flex flex-col w-60">
                   <label className="text-white text-sm font-semibold block mb-4">
-                    Chat Model Deployment Name
+                    Chat Deployment Name
                   </label>
                   <input
                     type="text"
@@ -182,7 +189,7 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
 
                 <div className="flex flex-col w-60">
                   <label className="text-white text-sm font-semibold block mb-4">
-                    Embedding Model Deployment Name
+                    Embedding Deployment Name
                   </label>
                   <input
                     type="text"
@@ -198,12 +205,47 @@ function LLMSelection({ nextStep, prevStep, currentStep }) {
               </>
             )}
 
-            {llmChoice === "anthropic-claude-2" && (
-              <div className="w-full h-40 items-center justify-center flex">
-                <p className="text-gray-800 dark:text-slate-400">
-                  This provider is unavailable and cannot be used in AnythingLLM
-                  currently.
-                </p>
+            {llmChoice === "anthropic" && (
+              <div className="w-full flex flex-col">
+                <div className="w-full flex items-center gap-4">
+                  <div className="flex flex-col w-60">
+                    <label className="text-white text-sm font-semibold block mb-4">
+                      Anthropic Claude-2 API Key
+                    </label>
+                    <input
+                      type="text"
+                      name="AnthropicApiKey"
+                      className="bg-zinc-900 text-white placeholder-white placeholder-opacity-60 text-sm rounded-lg focus:border-white block w-full p-2.5"
+                      placeholder="Anthropic Claude-2 API Key"
+                      defaultValue={
+                        settings?.AnthropicApiKey ? "*".repeat(20) : ""
+                      }
+                      required={true}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                  </div>
+
+                  <div className="flex flex-col w-60">
+                    <label className="text-white text-sm font-semibold block mb-4">
+                      Chat Model Selection
+                    </label>
+                    <select
+                      name="AnthropicModelPref"
+                      defaultValue={settings?.AnthropicModelPref || "claude-2"}
+                      required={true}
+                      className="bg-zinc-900 border border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+                    >
+                      {["claude-2"].map((model) => {
+                        return (
+                          <option key={model} value={model}>
+                            {model}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
               </div>
             )}
           </div>
